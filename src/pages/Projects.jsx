@@ -1,13 +1,17 @@
-import { useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 
 import Spinner from "../components/Spinner";
 import ErrorMessage from "../components/ErrorMessage";
+
 import {
   getTasks,
   createTask,
   updateTask,
   deleteTask,
 } from "../api/api";
+
+// Lazy-load Task Statistics component
+const TaskStats = lazy(() => import("../components/TaskStats"));
 
 function Projects() {
   const [tasks, setTasks] = useState([]);
@@ -223,6 +227,25 @@ function Projects() {
 
       {/* Error during POST / PUT / DELETE */}
       {actionError && <ErrorMessage message={actionError} />}
+
+      {/* Lazy-loaded Task Statistics */}
+      <Suspense
+        fallback={
+          <div
+            style={{
+              marginTop: "20px",
+              marginBottom: "20px",
+              padding: "15px",
+              border: "1px solid #ccc",
+              borderRadius: "8px",
+            }}
+          >
+            Loading task statistics...
+          </div>
+        }
+      >
+        <TaskStats tasks={tasks} />
+      </Suspense>
 
       {/* Task List */}
       <div>
